@@ -1,0 +1,51 @@
+global:
+  nodePort: false
+  proxy:
+    # replace with your GKE IP ranges
+    includeIPRanges: "10.8.0.0/14,10.11.240.0/20"
+
+sidecarInjectorWebhook:
+  enabled: true
+  enableNamespacesByDefault: false
+
+gateways:
+  enabled: true
+  istio-ingressgateway:
+    replicaCount: 2
+    autoscaleMin: 2
+    autoscaleMax: 3
+    # replace with your Istio Gateway IP
+    loadBalancerIP: "35.231.8.197"
+    type: LoadBalancer
+
+pilot:
+  enabled: true
+  replicaCount: 1
+  autoscaleMin: 1
+  autoscaleMax: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+
+grafana:
+  enabled: true
+  security:
+    enabled: true
+    adminUser: admin
+    # change the password
+    adminPassword: W0kkaW0kka
+
+prometheus:
+  enabled: true
+
+servicegraph:
+  enabled: true
+
+tracing:
+  enabled: true
+  jaeger:
+    tag: 1.7
+
+certmanager:
+  enabled: true
