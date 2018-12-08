@@ -1,0 +1,10 @@
+host: backend
+
+blue:
+  replicas: 2
+  tag: "1.2.0"
+  backend: http://store:9898/api/echo
+
+green:
+  # disabled (all traffic goes to blue)
+  replicas: 0

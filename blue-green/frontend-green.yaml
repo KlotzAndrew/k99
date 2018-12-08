@@ -1,0 +1,25 @@
+host: podinfo.mixship.com
+exposeHost: true
+
+blue:
+  replicas: 2
+  tag: "1.2.0"
+  message: "Greetings from the blue frontend"
+  backend: http://backend:9898/api/echo
+
+green:
+  replicas: 2
+  tag: "1.2.1"
+  routing:
+    # target Safari
+    - match:
+      - headers:
+          user-agent:
+            regex: "^(?!.*Chrome).*Safari.*"
+    # target API clients by version
+    - match:
+      - headers:
+          x-api-version:
+            regex: "^(v{0,1})1\\.2\\.([1-9]).*"
+  message: "Greetings from the green frontend"
+  backend: http://backend:9898/api/echo

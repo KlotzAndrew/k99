@@ -109,3 +109,45 @@ kubectl create secret generic cert-manager-credentials \
 kubectl apply -f ./letsencrypt-issuer.yaml
 
 kubectl apply -f ./wildcard-cert.yaml
+
+# expose virtual service
+
+kubectl apply -f ./grafana-virtual-service.yaml
+
+curl -I --http2 https://grafana.mixship.com
+
+### A/B testing
+
+helm repo add sp https://stefanprodan.github.io/k8s-podinfo
+
+kubectl apply -f ./demo-namespace.yaml
+
+# setup services
+
+helm install --name frontend sp/podinfo-istio \
+  --namespace demo \
+  -f ./frontend.yaml
+
+helm install --name backend sp/podinfo-istio \
+  --namespace demo \
+  -f ./backend.yaml
+
+helm install --name store sp/podinfo-istio \
+  --namespace demo \
+  -f ./store.yaml
+
+# start deploy
+
+helm upgrade --install frontend sp/podinfo-istio \
+  --namespace demo \
+  -f ./frontend-green.yaml
+
+helm upgrade --install backend sp/podinfo-istio \
+  --namespace demo \
+  -f ./backend-green.yaml
+
+helm upgrade --install store sp/podinfo-istio \
+  --namespace demo \
+  -f ./store.yaml
+
+kubectl apply -f ./demo-rules.yaml

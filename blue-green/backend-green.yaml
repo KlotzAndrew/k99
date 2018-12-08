@@ -1,0 +1,16 @@
+host: backend
+
+blue:
+  replicas: 2
+  tag: "1.2.0"
+  backend: http://store:9898/api/echo
+
+green:
+  replicas: 2
+  tag: "1.2.1"
+  routing:
+    # target green callers
+    - match:
+      - sourceLabels:
+          color: green
+  backend: http://store:9898/api/echo

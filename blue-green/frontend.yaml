@@ -1,0 +1,12 @@
+host: podinfo.mixship.com
+exposeHost: true
+
+blue:
+  replicas: 2
+  tag: "1.2.0"
+  message: "Greetings from the blue frontend"
+  backend: http://backend:9898/api/echo
+
+green:
+  # disabled (all traffic goes to blue)
+  replicas: 0
