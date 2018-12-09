@@ -29,10 +29,6 @@
   name = "github.com/opentracing/opentracing-go"
   version = "1.0.2"
 
-[[constraint]]
-  name = "github.com/uber/jaeger-client-go"
-  version = "2.15.0"
-
 [prune]
   go-tests = true
   unused-packages = true
