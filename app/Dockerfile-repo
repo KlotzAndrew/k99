@@ -1,0 +1,13 @@
+FROM golang:1.11.2-stretch
+
+WORKDIR "$GOPATH"/src/k99/app
+
+COPY Gopkg.lock Gopkg.lock
+COPY Gopkg.toml Gopkg.toml
+
+COPY . .
+
+RUN go get -u github.com/golang/dep/...
+RUN dep ensure
+
+CMD ["go", "run", "backend-repo/main.go"]

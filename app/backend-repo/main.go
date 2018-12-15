@@ -25,6 +25,7 @@ func main() {
 	opentracing.SetGlobalTracer(tracer)
 
 	http.HandleFunc("/ping", pingHandler())
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("OK")) })
 
-	log.Fatal(http.ListenAndServe(":3002", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }

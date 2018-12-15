@@ -41,7 +41,14 @@ func ContextFromHTTP(name string, r *http.Request) (context.Context, opentracing
 		opentracing.HTTPHeadersCarrier(r.Header),
 	)
 	if err != nil {
-		panic(err)
+		switch err {
+		default:
+			panic(err)
+		case opentracing.ErrUnsupportedFormat:
+			panic(err)
+		case opentracing.ErrSpanContextNotFound:
+			// all good
+		}
 	}
 	serverSpan := opentracing.StartSpan(
 		"pinging",

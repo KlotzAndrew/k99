@@ -9,3 +9,5 @@ COPY . .
 
 RUN go get -u github.com/golang/dep/...
 RUN dep ensure
+
+CMD ["go", "run", "frontend/main.go"]
