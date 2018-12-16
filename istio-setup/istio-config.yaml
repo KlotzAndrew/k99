@@ -42,6 +42,9 @@ prometheus:
 servicegraph:
   enabled: true
 
+kiali:
+  enabled: true
+
 tracing:
   enabled: true
   jaeger:
