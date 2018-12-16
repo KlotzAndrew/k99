@@ -7,6 +7,9 @@ metadata:
     helm.sh/chart: {{ include "chart.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    name: frontend
+    app: frontend
+    version: 1.0.0
 spec:
   type: {{ .Values.frontend.service.type }}
   ports:

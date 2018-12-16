@@ -1,0 +1,55 @@
+version: "3.5"
+services:
+  repo:
+    build:
+      context: .
+      dockerfile: Dockerfile-repo
+    environment:
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_REPORTER_LOG_SPANS=true
+      - JAEGER_SERVICE_NAME=repo
+    ports:
+      - "3001:80"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile-backend
+    ports:
+      - "3002:80"
+    environment:
+      - REPO_URL=http://repo
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_REPORTER_LOG_SPANS=true
+      - JAEGER_SERVICE_NAME=backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "3003:80"
+    environment:
+      - BACKEND_URL=http://backend
+      - JAEGER_AGENT_HOST=jaeger
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+      - JAEGER_REPORTER_LOG_SPANS=true
+      - JAEGER_SERVICE_NAME=frontend
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.8
+    ports:
+      - "5775:5775"
+      - "6831:6831"
+      - "6832:6832"
+      - "5778:5778"
+      - "4444:16686"
+      - "14268:14268"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411

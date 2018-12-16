@@ -21,6 +21,9 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "chart.backend.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        name: backend
+        app: backend
+        version: 1.0.0
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -29,8 +32,16 @@ spec:
           env:
           - name: REPO_URL
             value: http://repo
-          - name: JAEGER_ENDPOINT
-            value: http://jaeger-collector.istio-system:14268/api/traces
+          - name: JAEGER_AGENT_HOST
+            value: jaeger-agent.istio-system.svc
+          - name: JAEGER_SAMPLER_TYPE
+            value: const
+          - name: JAEGER_SAMPLER_PARAM
+            value: "1"
+          - name: JAEGER_REPORTER_LOG_SPANS
+            value: "true"
+          - name: JAEGER_SERVICE_NAME
+            value: backend
           ports:
             - name: http
               containerPort: 80

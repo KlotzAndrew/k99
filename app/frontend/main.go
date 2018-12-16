@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	opentracing "github.com/opentracing/opentracing-go"
 
@@ -13,32 +11,14 @@ import (
 	"k99/app/lib/tracing"
 )
 
-func callServices(backend, repo string) {
-	tracer, closer := tracing.New("frontend")
-	defer closer.Close()
-	opentracing.SetGlobalTracer(tracer)
-
-	for {
-		time.Sleep(5 * time.Second)
-		span := tracer.StartSpan("frontend-reqest-start")
-		span.SetTag("event", "frontend-extra-tag")
+func pingHandler(url string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, span := client.ContextFromHTTP("pinging", r)
 		defer span.Finish()
 
-		ctx := context.Background()
-		ctx = opentracing.ContextWithSpan(ctx, span)
-
-		client.PingService(ctx, backend+"/ping", "ping-backend")
-		client.PingService(ctx, repo+"/ping", "ping-backend-repo")
+		client.PingService(ctx, url+"/ping", "ping-backend")
+		w.Write([]byte("pong"))
 	}
-}
-
-func repoURL() string {
-	url := os.Getenv("REPO_URL")
-	if url != "" {
-		return url
-	}
-
-	return "http://0.0.0.0:3002"
 }
 
 func backendURL() string {
@@ -51,8 +31,11 @@ func backendURL() string {
 }
 
 func main() {
-	go callServices(backendURL(), repoURL())
+	tracer, closer := tracing.New("frontend")
+	defer closer.Close()
+	opentracing.SetGlobalTracer(tracer)
 
+	http.HandleFunc("/ping", pingHandler(backendURL()))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("OK")) })
 
 	log.Fatal(http.ListenAndServe(":80", nil))

@@ -21,14 +21,25 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "chart.repo.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        name: repo
+        app: repo
+        version: 1.0.0
     spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.repo.image.repository }}:{{ .Values.repo.image.tag }}"
           imagePullPolicy: {{ .Values.repo.image.pullPolicy }}
           env:
-          - name: JAEGER_ENDPOINT
-            value: http://jaeger-collector.istio-system:14268/api/traces
+          - name: JAEGER_AGENT_HOST
+            value: jaeger-agent.istio-system.svc
+          - name: JAEGER_SAMPLER_TYPE
+            value: const
+          - name: JAEGER_SAMPLER_PARAM
+            value: "1"
+          - name: JAEGER_REPORTER_LOG_SPANS
+            value: "true"
+          - name: JAEGER_SERVICE_NAME
+            value: repo
           ports:
             - name: http
               containerPort: 80

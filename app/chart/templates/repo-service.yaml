@@ -7,6 +7,9 @@ metadata:
     helm.sh/chart: {{ include "chart.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    name: repo
+    app: repo
+    version: 1.0.0
 spec:
   type: {{ .Values.repo.service.type }}
   ports:
@@ -17,3 +20,6 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "chart.repo.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+    name: repo
+    app: repo
+    version: 1.0.0
